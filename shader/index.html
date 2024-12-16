@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <canvas id="glCanvas" width="640" height="480"></canvas>
+    <script>
+        const canvas = document.getElementById('glCanvas'); // Get the canvas element
+        const gl = canvas.getContext('webgl'); // Get the WebGL rendering context
+
+        if (!gl) {
+            console.error('WebGL not supported'); // Log an error if WebGL is not supported
+        }
+
+        gl.clearColor(0.0, 0.0, 0.0, 1.0); // Set clear color to black, fully opaque
+        gl.clear(gl.COLOR_BUFFER_BIT); // Clear the color buffer with the specified clear color
+        gl.viewport(0, 0, canvas.width, canvas.height); // Set the viewport to match the canvas dimensions
+
+        const vertexShaderSource = `
+    attribute vec4 aVertexPosition;
+    void main(void) {
+        gl_Position = aVertexPosition; // Set the position of the vertex
+    }
+`;
+
+        const fragmentShaderSource = `
+    void main(void) {
+        gl_FragColor = vec4(0.0, 1.0, 1.0, 1.0); // Set the fragment color to white
+    }
+`;
+
+        const fragmentShaderSourceTriangle = `
+        void main(void) {
+        gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0); // Set the fragment color to red
+        }
+    `;
+
+        function createShader(gl, type, source) {
+            const shader = gl.createShader(type); // Create a shader of the given type
+            gl.shaderSource(shader, source); // Set the source code of the shader
+            gl.compileShader(shader); // Compile the shader
+            if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+            console.error('An error occurred compiling the shaders: ' + gl.getShaderInfoLog(shader)); // Log an error if shader compilation failed
+            gl.deleteShader(shader); // Delete the shader
+            }
+            return shader; // Return the compiled shader
+        }
+
+        const vertexShader = createShader(gl, gl.VERTEX_SHADER, vertexShaderSource); // Create and compile the vertex shader
+        const fragmentShaderTriangle = createShader(gl, gl.FRAGMENT_SHADER, fragmentShaderSourceTriangle); // Create and compile the fragment shader for the triangle
+
+        const shaderProgramTriangle = gl.createProgram(); // Create a shader program for the triangle
+        gl.attachShader(shaderProgramTriangle, vertexShader); // Attach the vertex shader to the program
+        gl.attachShader(shaderProgramTriangle, fragmentShaderTriangle); // Attach the fragment shader to the program
+        gl.linkProgram(shaderProgramTriangle); // Link the shader program
+
+        if (!gl.getProgramParameter(shaderProgramTriangle, gl.LINK_STATUS)) {
+            console.error('Unable to initialize the shader program: ' + gl.getProgramInfoLog(shaderProgramTriangle)); // Log an error if program linking failed
+        }
+
+        gl.useProgram(shaderProgramTriangle); // Use the shader program for the triangle
+
+        const vertexPosition = gl.getAttribLocation(shaderProgramTriangle, 'aVertexPosition'); // Get the location of the vertex position attribute
+        gl.enableVertexAttribArray(vertexPosition); // Enable the vertex position attribute
+
+        const triangleVertices = new Float32Array([
+            0.0, 1.0,
+            -1.0, -1.0,
+            1.0, -1.0,
+        ]);
+
+        const triangleBuffer = gl.createBuffer(); // Create a buffer for the triangle vertices
+        gl.bindBuffer(gl.ARRAY_BUFFER, triangleBuffer); // Bind the buffer as the current array buffer
+        gl.bufferData(gl.ARRAY_BUFFER, triangleVertices, gl.STATIC_DRAW); // Load the triangle vertices into the buffer
+
+        gl.vertexAttribPointer(vertexPosition, 2, gl.FLOAT, false, 0, 0); // Define the structure of the vertex data
+        gl.drawArrays(gl.TRIANGLES, 0, 3); // Draw the triangle
+
+        const fragmentShaderSourceBox = `
+        void main(void) {
+        gl_FragColor = vec4(0.0, 1.0, 1.0, 1.0); // Set the fragment color to cyan
+        }
+    `;
+
+        const fragmentShaderBox = createShader(gl, gl.FRAGMENT_SHADER, fragmentShaderSourceBox); // Create and compile the fragment shader for the box
+
+        const shaderProgramBox = gl.createProgram(); // Create a shader program for the box
+        gl.attachShader(shaderProgramBox, vertexShader); // Attach the vertex shader to the program
+        gl.attachShader(shaderProgramBox, fragmentShaderBox); // Attach the fragment shader to the program
+        gl.linkProgram(shaderProgramBox); // Link the shader program
+
+        if (!gl.getProgramParameter(shaderProgramBox, gl.LINK_STATUS)) {
+            console.error('Unable to initialize the shader program: ' + gl.getProgramInfoLog(shaderProgramBox)); // Log an error if program linking failed
+        }
+
+        gl.useProgram(shaderProgramBox); // Use the shader program for the box
+
+        const vertexPositionBox = gl.getAttribLocation(shaderProgramBox, 'aVertexPosition'); // Get the location of the vertex position attribute
+        gl.enableVertexAttribArray(vertexPositionBox); // Enable the vertex position attribute
+
+        const boxVertices = new Float32Array([
+            -0.5, 0.5,
+            0.5, 0.5,
+            -0.5, -0.5,
+            0.5, -0.5,
+        ]);
+
+        const boxBuffer = gl.createBuffer(); // Create a buffer for the box vertices
+        gl.bindBuffer(gl.ARRAY_BUFFER, boxBuffer); // Bind the buffer as the current array buffer
+        gl.bufferData(gl.ARRAY_BUFFER, boxVertices, gl.STATIC_DRAW); // Load the box vertices into the buffer
+
+        gl.vertexAttribPointer(vertexPositionBox, 2, gl.FLOAT, false, 0, 0); // Define the structure of the vertex data
+        gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4); // Draw the box
+    </script>
+</body>
+
+</html>
