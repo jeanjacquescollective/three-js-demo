@@ -87,7 +87,7 @@ export class Camera {
         this.video, 0, 0, this.video.videoWidth, this.video.videoHeight);
   }
 
-  (faces, triangulateMesh, boundingBox) {
-    (this.ctx, faces, triangulateMesh, boundingBox);
+  drawResults(faces, triangulateMesh, boundingBox) {
+    drawResults(this.ctx, faces, triangulateMesh, boundingBox);
   }
 }
