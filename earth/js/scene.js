@@ -14,6 +14,8 @@
     const earthMaterial = new THREE.MeshStandardMaterial({
         map: loader.load('./assets/earth.jpg'), // Laad de textuur voor de aarde
     });
+
+    
     const earth = new THREE.Mesh(earthGeometry, earthMaterial); // Creëer een mesh voor de aarde
     scene.add(earth); // Voeg de aarde toe aan de scène
 
