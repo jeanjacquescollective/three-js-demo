@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/facemesh"></script>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
+        integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+    <!-- Latest compiled and minified plotly.js JavaScript -->
+    <script src="https://cdn.plot.ly/plotly-latest.min.js" charset="utf-8"></script>
+    <title>3D Face Mesh</title>
+</head>
+
+<body>
+    <div class="container">
+        <div class="row text-center" style="margin-top: 100px;">
+            <hr>
+            <div class="col-md-6">
+                <video autoplay playsinline muted id="webcam" width="300" height="400"></video>
+                <hr>
+                <button class="btn btn-info" id="capture">Capture</button>
+                <button class="btn btn-info" id="stop">Stop</button>
+
+            </div>
+            <div class="col-md-6">
+                <div id="plot" style="width: 500px; height: 600px;">
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+
+
+
+
+    <!-- Optional JavaScript -->
+    <script src="./js/main.js"></script>
+</body>
+
+</html>
