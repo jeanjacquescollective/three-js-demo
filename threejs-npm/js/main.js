@@ -20,21 +20,22 @@ import '@tensorflow/tfjs-backend-webgl';
 import * as tfjsWasm from '@tensorflow/tfjs-backend-wasm';
 
 tfjsWasm.setWasmPaths(
-    `https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-backend-wasm@${
-        tfjsWasm.version_wasm}/dist/`);
+  `https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-backend-wasm@${tfjsWasm.version_wasm}/dist/`);
 
 import '@tensorflow-models/face-detection';
 
-import {Camera} from './camera';
-import {setupDatGui} from './option_panel';
-import {STATE, createDetector} from './shared/params';
-import {setupStats} from './shared/stats_panel';
-import {setBackendAndEnvFlags} from './shared/util';
+import { Camera } from './camera';
+import { setupDatGui } from './option_panel';
+import { STATE, createDetector } from './shared/params';
+import { setupStats } from './shared/stats_panel';
+import { setBackendAndEnvFlags } from './shared/util';
+import { GLBModel } from './GLBModel';
 
 let detector, camera, stats;
 let startInferenceTime, numInferences = 0;
 let inferenceTimeSum = 0, lastPanelUpdate = 0;
 let rafId;
+let gltfModel;
 
 async function checkGuiUpdate() {
   if (STATE.isTargetFPSChanged || STATE.isSizeOptionChanged) {
@@ -84,7 +85,7 @@ function endEstimateFaceStats() {
     inferenceTimeSum = 0;
     numInferences = 0;
     stats.customFpsPanel.update(
-        1000.0 / averageInferenceTime, 120 /* maxValue */);
+      1000.0 / averageInferenceTime, 120 /* maxValue */);
     lastPanelUpdate = endInferenceTime;
   }
 }
@@ -110,7 +111,7 @@ async function renderResult() {
     // contain a model that doesn't provide the expected output.
     try {
       faces =
-          await detector.estimateFaces(camera.video, {flipHorizontal: false});
+        await detector.estimateFaces(camera.video, { flipHorizontal: false });
     } catch (error) {
       detector.dispose();
       detector = null;
@@ -127,8 +128,9 @@ async function renderResult() {
   // which shouldn't be rendered.
   if (faces && faces.length > 0 && !STATE.isModelChanged) {
     camera.drawResults(
-        faces, STATE.modelConfig.triangulateMesh,
-        STATE.modelConfig.boundingBox);
+      faces, STATE.modelConfig.triangulateMesh,
+      STATE.modelConfig.boundingBox);
+  gltfModel.drawGLTFMesh(camera.video, STATE.gltfUrl, faces);
   }
 }
 
@@ -152,6 +154,8 @@ async function app() {
 
   camera = await Camera.setupCamera(STATE.camera);
 
+  gltfModel = new GLBModel();
+  await gltfModel.loadGLTFModel(STATE.gltfUrl);
   await setBackendAndEnvFlags(STATE.flags, STATE.backend);
 
   detector = await createDetector();

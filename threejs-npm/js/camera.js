@@ -17,6 +17,8 @@
 
 import {VIDEO_SIZE} from './shared/params';
 import {drawResults, isMobile} from './shared/util';
+// import * as THREE from 'three';
+// import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 
 export class Camera {
   constructor() {
@@ -90,4 +92,5 @@ export class Camera {
   drawResults(faces, triangulateMesh, boundingBox) {
     drawResults(this.ctx, faces, triangulateMesh, boundingBox);
   }
+  
 }

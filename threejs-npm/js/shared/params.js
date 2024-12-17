@@ -32,7 +32,9 @@ export const STATE = {
   camera: {targetFPS: 60, sizeOption: '640 X 480'},
   backend: '',
   flags: {},
-  modelConfig: {}
+  modelConfig: {},
+  model: faceLandmarksDetection.SupportedModels.MediaPipeFaceMesh,
+  gltfUrl: '/3d-models/scene.gltf'
 };
 export const MEDIAPIPE_FACE_CONFIG = {
   maxFaces: 1,
